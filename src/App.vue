@@ -1,15 +1,55 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Welcome to Your Vue.js App" />
+  <div>
+    <div>
+      <input type="text" v-model="newTaskName" />
+      <button @click="addTask">+</button>
+    </div>
+    <task-list 
+    title="Tareas pendientes" 
+    :list="todoTask" 
+    @change-task-status="changeTaskState"/> 
+    <task-list 
+    title="Tareas listas" 
+    :list="doneTask" 
+    @change-task-status="changeTaskState"/> 
+  </div>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
+import TaskList from "./components/TaskList";
 
 export default {
   name: "App",
   components: {
-    HelloWorld
+    TaskList,
+  },
+  data(){
+    return{
+      newTaskName: "",
+      tasks:[]
+    };
+  },
+  computed:{
+    doneTask(){
+      return this.tasks.filter(task=> task.done);
+    },
+    todoTask(){
+      return this.tasks.filter(task => !task.done);
+    },
+  },
+  methods:{
+    addTask(){
+      const newTask = {
+        name: this.newTaskName,
+        done: false
+      };
+      this.tasks.push(newTask);
+      this.newTaskName = "";
+    },
+    changeTaskState(task){
+      const idx = this.tasks.indexOf(task);
+      this.tasks[idx].done = !this.tasks[idx].done
+    },
   }
 };
 </script>
